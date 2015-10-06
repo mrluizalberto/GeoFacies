@@ -278,7 +278,7 @@ class AbstractTCRFR(object):
                 lats += ' '
                 if i % 50 == 0:
                     lats += '\n'
-            print lats
+ #           print lats
 
             # 2. solve the crf parameter estimation problem
             obj_crf, v = self.em_estimate_v(v, psi, use_grads=use_grads)
@@ -288,30 +288,30 @@ class AbstractTCRFR(object):
             old_obj = obj
             obj = self.reg_theta * obj_regression + (1.0 - self.reg_theta) * obj_crf
             rel = np.abs((old_obj - obj) / obj)
-            print('Iter={0} regr={1:4.2f} crf={2:4.2f}; objective={3:4.2f} rel={4:2.4f} lats={5}'.format(
-                cnt_iter, obj_regression, obj_crf, obj, rel, np.unique(self.latent).size))
+#            print('Iter={0} regr={1:4.2f} crf={2:4.2f}; objective={3:4.2f} rel={4:2.4f} lats={5}'.format(
+#                cnt_iter, obj_regression, obj_crf, obj, rel, np.unique(self.latent).size))
             if best_sol[1] >= obj:
                 best_sol = [cnt_iter, obj, u, v, self.latent]
-                print('*')
+#                print('*')
             if cnt_iter > 3 and rel < 0.0001:
                 is_converged = True
             if np.isinf(obj) or np.isnan(obj):
                 return False
             cnt_iter += 1
         iter, _, self.u, self.v, self.latent = best_sol
-        print('Take best solution from iteration {0}/{1}.'.format(iter, cnt_iter-1))
+#        print('Take best solution from iteration {0}/{1}.'.format(iter, cnt_iter-1))
 
         # print
         vup = self.unpack_v(self.v)
 
         cnt = 0
         for i in range(self.trans_n):
-            print i
-            print vup[cnt:cnt+self.S*self.S].reshape((self.S, self.S), order='C')
+#            print i
+#            print vup[cnt:cnt+self.S*self.S].reshape((self.S, self.S), order='C')
             cnt += self.trans_d_full
 
-        print 'Emissions:'
-        print vup[cnt:]
+#        print 'Emissions:'
+#        print vup[cnt:]
 
         return is_converged
 
