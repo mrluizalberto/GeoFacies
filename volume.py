@@ -1,5 +1,5 @@
 import numpy as np
-import Image
+from PIL import Image
 from matplotlib.pyplot import imshow
 
 # Define a color table
@@ -111,7 +111,7 @@ class Vol:
                 " "+'%.6f' % self.stepX+" "+'%.6f' % self.stepY+" "+'%.6f' % self.stepZ+
                 " "+'%.6f' % self.rotation+"\n")
         f.write('VValue\n')
-        for z in range(self.sizeZ):
+        for z in range(self.sizeZ-1,-1,-1):
             for y in range(self.sizeY):
                 for x in range(self.sizeX):
                     f.write(str(self.data[z,y,x])+"\n")
@@ -135,6 +135,7 @@ class Vol:
             for j in range(dim_vx_Y):
                 for k in range(dim_vx_X):
                     subVol[i,j,k] = self.data[init_vx_Z+i,init_vx_Y+j,init_vx_X+k]
+        subVol = np.flipud(subVol)
                 
         # Save the sub-volume to fileName
         f = open(fileName, 'w')
@@ -199,7 +200,7 @@ class Vol:
         refZB = self.getResBase()
 
         # Create and display image
-        img = Image.new( 'RGBA', (self.sizeX,self.sizeY), "white") # create a new white image
+        img = Image.new( 'RGBA', (self.sizeX,self.sizeY), "grey") # create a new grey image
         pixels = img.load() # create the pixel map
 
         print img.size[0],img.size[1]
@@ -208,10 +209,11 @@ class Vol:
             for j in range(img.size[1]):
                 l = refZB[i][j]-refZT[i][j]
                 z =refZB[i][j]-int(round(d*l))
-                pixels[i,j] = (color_table[vol_color[z,j,i]][0], 
-                               color_table[vol_color[z,j,i]][1], 
-                               color_table[vol_color[z,j,i]][2], 
-                               color_table[vol_color[z,j,i]][3])
+                if vol_color[z,j,i] >= 0:
+                    pixels[i,j] = (color_table[vol_color[z,j,i]][0],
+                                   color_table[vol_color[z,j,i]][1],
+                                   color_table[vol_color[z,j,i]][2],
+                                   color_table[vol_color[z,j,i]][3])
         imshow(np.array(img), origin='lower')
         
         
@@ -235,13 +237,14 @@ class Vol:
                     minIndex).astype(int)
         
          # Create and display image
-        img = Image.new( 'RGBA', (self.sizeX,self.sizeY), "white") # create a new white image
+        img = Image.new( 'RGBA', (self.sizeX,self.sizeY), "grey") # create a new grey image
         pixels = img.load() # create the pixel map
 
         for i in range(img.size[0]):  # for every pixel
             for j in range(img.size[1]):
-                pixels[i,j] = (color_table[vol_color[sliceNumber,j,i]][0], 
-                               color_table[vol_color[sliceNumber,j,i]][1], 
-                               color_table[vol_color[sliceNumber,j,i]][2], 
-                               color_table[vol_color[sliceNumber,j,i]][3])
+                if vol_color[sliceNumber,j,i] >= 0:
+                    pixels[i,j] = (color_table[vol_color[sliceNumber,j,i]][0],
+                                   color_table[vol_color[sliceNumber,j,i]][1],
+                                   color_table[vol_color[sliceNumber,j,i]][2],
+                                   color_table[vol_color[sliceNumber,j,i]][3])
         imshow(np.array(img), origin='lower')        
