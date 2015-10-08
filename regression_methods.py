@@ -258,16 +258,16 @@ def method_tcrfr_v2(vecX, vecy, train, test, A, states=2, params=[0.9, 0.00001, 
     #         A[i, i+4] = 1
     #         A[i+4, i] = 1
 
-    tcrfr = TCRFR_QP(data=vecX.T, labels=vecy[train], label_inds=train, unlabeled_inds=test, states=states, A=A,
-                  reg_theta=params[0], reg_lambda=params[1], reg_gamma=params[2]*float(len(train)+len(test)),
-                  trans_regs=[.1, 0.5], trans_sym=[0])
-    # tcrfr = TCRFR_Fast(data=vecX.T, labels=vecy[train], label_inds=train, unlabeled_inds=test, states=states, A=A,
+    # tcrfr = TCRFR_QP(data=vecX.T, labels=vecy[train], label_inds=train, unlabeled_inds=test, states=states, A=A,
     #               reg_theta=params[0], reg_lambda=params[1], reg_gamma=params[2]*float(len(train)+len(test)),
-    #               trans_regs=[.01, 0.5], trans_sym=[0], lbl_weight=1.0)
+    #               trans_regs=[.05, 0.5], trans_sym=[0])
+    tcrfr = TCRFR_Fast(data=vecX.T, labels=vecy[train], label_inds=train, unlabeled_inds=test, states=states, A=A,
+                  reg_theta=params[0], reg_lambda=params[1], reg_gamma=params[2]*float(len(train)+len(test)),
+                  trans_regs=[0.03, 0.5], trans_sym=[0], lbl_weight=1.0)
 
-#    tcrfr.solution_latent = true_latent
-    tcrfr.fit(max_iter=40, use_grads=False)
+    tcrfr.fit(max_iter=20, use_grads=False)
     y_preds, lats = tcrfr.predict()
+
     print lats
 
     if plot:
